@@ -1,0 +1,114 @@
+#Birthday Reminder App
+from datetime import datetime
+from datetime import date
+from calendar import monthrange
+
+def FindDaysOfBirthMonth(Birthmonth,Birthday_year):
+    if (Birthmonth==1 or Birthmonth==3 or Birthmonth==5 or Birthmonth==7 or Birthmonth==8 or Birthmonth==10 or Birthmonth==12):
+        return int(31)
+    elif ((Birthmonth==2) and (Birthday_year%4==0) or ((Birthday_year%100==0) and (Birthday_year%400==0))):
+        return int(29)
+    elif (Birthmonth==2):
+        return int(28)
+    else:
+        return int(30)
+    
+def BirthdayBeforeToday(NoOfDays,today_date,birth_date,Birthday_date,Birthday_year):
+    Weekday = birth_date.weekday()
+    Birthmonth = birth_date.month
+    ThisMonth = today_date.month
+    DaysOfThisMonth = monthrange(Birthday_year,today_date.month)[1]
+    DaysOfPrevMonth = monthrange(Birthday_year,today_date.month-1)[1]
+    DaysOfNextMonth = monthrange(Birthday_year,today_date.month+1)[1]
+    Birthmonth = birth_date.month
+    DaysOfBirthmonth = FindDaysOfBirthMonth(Birthmonth,Birthday_year)
+    if (NoOfDays==0):
+        return "Today"
+    elif (NoOfDays>0 and NoOfDays<7):
+        if (NoOfDays==1):
+            return "Yesterday"
+        elif (NoOfDays==2):
+            return "Day before yesterday"
+        else:
+            return str(NoOfDays)+" "+"days back"  
+    elif (NoOfDays==7):
+        return "Last"+" "+str(Birthday_date.strftime("%A"))
+    elif (NoOfDays>7 and NoOfDays<14):
+        return "in the last week"
+    elif (NoOfDays>=14 and NoOfDays<21):
+        return "2 weeks ago"
+    elif (NoOfDays>=21 and NoOfDays<28):
+        return "3 weeks ago"
+    elif (NoOfDays>=28 and NoOfDays<DaysOfThisMonth):
+        return "Amost a month ago"
+    elif (NoOfDays>=DaysOfThisMonth and NoOfDays<DaysOfPrevMonth+today_date.day):
+        return "Last Month" #str(DaysOfPrevMonth) + str(today_date.day) +str(Diff.days)  
+    else:
+        MonthDiff = today_date.month-Birthday_date.month
+        return str(MonthDiff) + " "+ "months ago"
+    
+    
+def BirthdayAfterToday(NoOfDays,today_date,birth_date,Birthday_date,Birthday_year):
+    Weekday = birth_date.weekday()
+    Birthmonth = birth_date.month
+    ThisMonth = today_date.month
+    DaysOfThisMonth = monthrange(Birthday_year,today_date.month)[1]
+    DaysOfPrevMonth = monthrange(Birthday_year,today_date.month-1)[1]
+    DaysOfNextMonth = monthrange(Birthday_year,today_date.month+1)[1]
+    Birthmonth = birth_date.month
+    DaysOfBirthmonth = FindDaysOfBirthMonth(Birthmonth,Birthday_year)
+    if (NoOfDays==0):
+        return "Today"
+    elif (NoOfDays>0 and NoOfDays<7):
+        if (NoOfDays==1):
+            return "Tommorrow"
+        elif (NoOfDays==2):
+            return "Day after tommorrow"
+        else:
+            return str(NoOfDays)+" "+"days from now"+","+" "+ str(Birthday_date.strftime("%A"))  
+    elif (NoOfDays==7):
+        return "Next"+" "+str(Birthday_date.strftime("%A"))
+    elif (NoOfDays>7 and NoOfDays<14):
+        return "in the next week"
+    elif (NoOfDays==14):
+        return "2 weeks from now"
+    elif (NoOfDays>=14 and NoOfDays<21):
+        return str(NoOfDays)+" "+"days from now"
+    elif (NoOfDays==21):
+        return "3 weeks from now"
+    elif (NoOfDays>=21 and NoOfDays<28):
+        return "After 3 weeks"
+    elif (NoOfDays>=28 and NoOfDays<DaysOfThisMonth):
+        return str(NoOfDays)+" "+"days from now"
+    elif (NoOfDays>=DaysOfThisMonth and NoOfDays<=DaysOfNextMonth+DaysOfThisMonth-today_date.day):
+        return "Next Month" #str(Diff.days) + str(DaysOfNextMonth) +str(DaysOfThisMonth) + str(today_date.day)
+    else:
+        MonthDiff = Birthday_date.month-today_date.month
+        return str(MonthDiff) + " "+ "months from now"
+    
+    
+def Time_Difference(DOB_str):
+    birth_date = datetime.strptime(DOB_str, '%d-%m-%Y').date()  # converts the string to date format
+    
+    today_date = date.today() # stores the value of the current date
+    
+    Birthday_year = today_date.year
+    #condition if the birth date has already passed or the birth date is upcoming 
+    if (today_date.month == birth_date.month and today_date.day > birth_date.day or today_date.month>birth_date.month):
+        #birthday has already passed 
+        Birthday_date = date(Birthday_year, birth_date.month, birth_date.day)
+        Diff = today_date-Birthday_date
+        NoOfDays = Diff.days         
+        Message = BirthdayBeforeToday(NoOfDays,today_date,birth_date,Birthday_date,Birthday_year)
+        return Message
+    else:
+        #birthday is upcoming
+        Birthday_date = date(Birthday_year, birth_date.month, birth_date.day)
+        Diff = Birthday_date-today_date
+        NoOfDays = Diff.days
+        Message = BirthdayAfterToday(NoOfDays,today_date,birth_date,Birthday_date,Birthday_year)
+        return Message
+        
+dob = input() #take the input as the birthday in the form of string
+res = Time_Difference(dob) 
+print(res) #prints the output in the form of days
